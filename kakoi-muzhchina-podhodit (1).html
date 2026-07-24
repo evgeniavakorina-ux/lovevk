@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Какой мужчина тебе подходит для брака</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7F1E6;
+    --cream-dark:#EDE3D0;
+    --card:#FFFDF9;
+    --burgundy:#6B2039;
+    --burgundy-dark:#4A1526;
+    --gold:#B8863B;
+    --gold-light:#D9BA7E;
+    --ink:#2A211C;
+    --muted:#8A7B69;
+    --line: rgba(107,32,57,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 800px at 10% -10%, rgba(184,134,59,0.08), transparent 60%),
+      radial-gradient(1000px 700px at 110% 10%, rgba(107,32,57,0.06), transparent 60%),
+      var(--cream);
+    color:var(--ink);
+    font-family:'Cormorant Garamond', serif;
+    font-size:19px;
+    line-height:1.55;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:40px 16px 80px;
+  }
+  h1,h2,h3,.serif-display{font-family:'Playfair Display', serif;}
+  .wrap{width:100%;max-width:680px;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-top:3px solid var(--burgundy);
+    padding:44px 44px 40px;
+    position:relative;
+  }
+  @media (max-width:600px){
+    .card{padding:30px 22px 30px;}
+    body{font-size:18px;padding:24px 10px 60px;}
+  }
+  .eyebrow{
+    font-family:'Cormorant Garamond', serif;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-size:13px;
+    color:var(--gold);
+    font-weight:600;
+    margin-bottom:14px;
+  }
+  h1.title{font-size:34px;line-height:1.18;font-weight:600;margin:0 0 18px;color:var(--burgundy-dark);}
+  .lead{font-size:20px;color:var(--ink);margin:0 0 16px;}
+  .muted{color:var(--muted);}
+  .rule{height:1px;background:var(--line);margin:26px 0;}
+  .btn{
+    font-family:'Cormorant Garamond', serif;
+    font-size:19px;
+    font-weight:600;
+    letter-spacing:.02em;
+    background:var(--burgundy);
+    color:#fff;
+    border:none;
+    padding:15px 30px;
+    cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+    text-decoration:none;
+    display:inline-block;
+  }
+  .btn:hover{background:var(--burgundy-dark);}
+  .btn:active{transform:translateY(1px);}
+  .btn[disabled]{background:#cfc3ae;cursor:not-allowed;}
+  .btn-ghost{
+    background:transparent;
+    color:var(--burgundy);
+    border:1px solid var(--burgundy);
+  }
+  .btn-ghost:hover{background:rgba(107,32,57,0.06);}
+  .btn-sm{padding:10px 18px;font-size:16px;}
+  .row-actions{display:flex;justify-content:space-between;align-items:center;margin-top:30px;gap:14px;flex-wrap:wrap;}
+  .row-actions .left-actions{display:flex;gap:10px;align-items:center;}
+  .step-note{font-size:15px;color:var(--muted);font-style:italic;}
+
+  .progress{display:flex;gap:8px;margin-bottom:28px;}
+  .dot{flex:1;height:3px;background:var(--cream-dark);position:relative;overflow:hidden;}
+  .dot.done, .dot.active{background:var(--gold);}
+  .progress-label{font-size:14px;color:var(--muted);margin-bottom:6px;letter-spacing:.02em;}
+
+  .screen{display:none;animation:fade .35s ease;}
+  .screen.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  @media (max-width:560px){.grid-3{grid-template-columns:1fr 1fr;}}
+  .chip{
+    border:1px solid var(--line);
+    background:#fff;
+    padding:12px 10px;
+    text-align:center;
+    cursor:pointer;
+    font-size:18px;
+    transition:all .12s ease;
+    user-select:none;
+  }
+  .chip:hover{border-color:var(--gold);}
+  .chip.selected{background:var(--burgundy);color:#fff;border-color:var(--burgundy);}
+  .chip.locked{opacity:.35;cursor:not-allowed;}
+
+  .value-list, .tile-list{display:flex;flex-direction:column;gap:8px;}
+  .value-row, .tile{
+    display:flex;align-items:center;gap:14px;
+    border:1px solid var(--line);
+    padding:14px 16px;
+    cursor:pointer;
+    background:#fff;
+    font-size:18px;
+  }
+  .value-row:hover, .tile:hover{border-color:var(--gold);}
+  .value-row.selected, .tile.selected{background:var(--burgundy);color:#fff;border-color:var(--burgundy);}
+  .value-row .mark, .tile .mark{
+    width:18px;height:18px;border:1.5px solid var(--gold);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gold);
+  }
+  .value-row.selected .mark, .tile.selected .mark{border-color:#fff;color:#fff;}
+
+  .slider-block{margin-bottom:30px;}
+  .slider-labels{display:flex;justify-content:space-between;font-size:16px;margin-bottom:10px;gap:10px;}
+  .slider-labels span{max-width:47%;color:var(--ink);}
+  .slider-labels span:last-child{text-align:right;}
+  input[type=range]{
+    -webkit-appearance:none;width:100%;height:2px;background:var(--line);outline:none;margin:0;
+  }
+  input[type=range].touched{background:var(--gold-light);}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:var(--gold);border:2px solid var(--card);box-shadow:0 0 0 1px var(--gold);cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid var(--card);
+    box-shadow:0 0 0 1px var(--gold);cursor:pointer;
+  }
+  .slider-hint{font-size:14px;color:var(--muted);margin-top:8px;font-style:italic;}
+  .slider-hint.ok{color:var(--gold);}
+
+  .pair{border:1px solid var(--line);margin-bottom:16px;}
+  .pair-q{padding:12px 18px 4px;font-size:16px;color:var(--muted);font-style:italic;}
+  .pair-opt{
+    padding:14px 18px;cursor:pointer;font-size:18px;position:relative;background:#fff;border-top:1px solid var(--line);
+  }
+  .pair-opt:hover{background:var(--cream);}
+  .pair-opt.selected{background:var(--burgundy);color:#fff;}
+
+  /* compass */
+  .compass-wrap{display:flex;flex-direction:column;align-items:center;margin:8px 0 10px;}
+  .compass-labels{position:relative;width:260px;height:260px;}
+  .compass-labels .lab{
+    position:absolute;font-family:'Playfair Display',serif;font-size:15px;color:var(--muted);
+    text-align:center;width:130px;
+  }
+  .lab.n{top:-6px;left:50%;transform:translateX(-50%);}
+  .lab.e{top:50%;right:-70px;transform:translateY(-50%);text-align:left;}
+  .lab.s{bottom:-6px;left:50%;transform:translateX(-50%);}
+  .lab.w{top:50%;left:-70px;transform:translateY(-50%);text-align:right;}
+  @media (max-width:560px){
+    .compass-labels{width:210px;height:210px;}
+    .lab{font-size:13px;width:96px;}
+    .lab.e{right:-48px;} .lab.w{left:-48px;}
+  }
+  .lab.win{color:var(--burgundy);font-weight:700;}
+  .compass-note{font-size:14px;color:var(--muted);font-style:italic;text-align:center;margin-top:6px;}
+
+  .bars{margin-top:10px;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:16px;}
+  .bar-row .bar-name{width:110px;flex:0 0 auto;color:var(--ink);}
+  .bar-track{flex:1;height:8px;background:var(--cream-dark);position:relative;}
+  .bar-fill{height:100%;background:var(--gold);}
+  .bar-row.win .bar-fill{background:var(--burgundy);}
+  .bar-row.win .bar-name{font-weight:600;color:var(--burgundy);}
+  .bar-pct{width:38px;text-align:right;color:var(--muted);font-size:14px;}
+
+  .result-title{font-size:30px;color:var(--burgundy-dark);margin:6px 0 10px;font-weight:600;}
+  .result-lead{font-size:20px;margin-bottom:14px;}
+  .list-clean{margin:0 0 20px;padding:0;list-style:none;}
+  .list-clean li{padding-left:22px;position:relative;margin-bottom:9px;font-size:18px;}
+  .list-clean li::before{content:"—";position:absolute;left:0;color:var(--gold);}
+
+  .orient-box{
+    border:1px solid var(--line);
+    background:var(--cream-dark);
+    padding:26px 28px;
+    margin:26px 0;
+  }
+  .orient-box h3{font-size:22px;color:var(--burgundy-dark);margin:0 0 16px;}
+  .orient-box .field{margin-bottom:16px;}
+  .orient-box .field b{display:block;font-size:15px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em;}
+  .orient-box .field span{font-size:18px;}
+  .orient-box .list-clean{margin-bottom:8px;}
+
+  .callout{
+    background:var(--cream-dark);
+    border-left:3px solid var(--gold);
+    padding:16px 20px;
+    font-size:17px;
+    margin:20px 0;
+    color:var(--ink);
+  }
+  .callout b{display:block;margin-bottom:6px;}
+  .callout.warn{border-left-color:var(--burgundy);}
+
+  .practice-block{margin:30px 0;}
+  .practice-block h3{font-size:22px;color:var(--burgundy-dark);margin:0 0 10px;}
+  .practice-block ol{padding-left:22px;margin:14px 0;}
+  .practice-block ol li{margin-bottom:8px;font-size:18px;}
+  .key-q{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:19px;
+    color:var(--burgundy-dark);
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+
+  .dating-block{margin:30px 0;}
+  .dating-block h3{font-size:22px;color:var(--burgundy-dark);margin:0 0 4px;}
+  .dating-block .sub{color:var(--muted);font-size:15px;margin-bottom:12px;}
+  .dating-group{margin-bottom:16px;}
+  .dating-group .g-name{font-weight:600;color:var(--burgundy);margin-bottom:6px;font-size:17px;}
+
+  .quote{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:20px;
+    color:var(--burgundy-dark);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:20px 0;
+    margin:26px 0;
+  }
+
+  .save-row{text-align:center;margin:10px 0 4px;}
+
+  .cta-box{
+    background:var(--burgundy);
+    color:#fff;
+    padding:32px 32px;
+    margin-top:10px;
+  }
+  .cta-box h3{font-size:23px;margin:0 0 12px;color:#fff;line-height:1.3;}
+  .cta-box p{font-size:18px;margin:0 0 16px;color:rgba(255,255,255,0.92);}
+  .cta-box .situ-line{font-style:italic;color:var(--gold-light);margin-bottom:16px;font-size:17px;}
+  .cta-box ul.list-clean{margin:0 0 16px;}
+  .cta-box ul.list-clean li{color:rgba(255,255,255,0.92);}
+  .cta-box ul.list-clean li::before{color:var(--gold-light);}
+  .cta-price{font-size:22px;font-weight:600;color:#fff;margin:14px 0 18px;font-family:'Playfair Display',serif;}
+  .cta-btn-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .cta-main-btn{
+    flex:1 1 200px;text-align:center;
+    background:var(--gold);color:var(--burgundy-dark);
+    padding:18px 20px;font-size:19px;font-weight:700;
+  }
+  .cta-main-btn:hover{background:var(--gold-light);}
+  .cta-note{font-size:15px;color:rgba(255,255,255,0.78);margin-top:14px;line-height:1.5;}
+  .cta-note a{color:var(--gold-light);}
+
+  .restart{display:block;margin:26px auto 0;text-align:center;color:var(--muted);font-size:15px;background:none;border:none;text-decoration:underline;cursor:pointer;}
+
+  .footer-name{margin-top:34px;text-align:center;font-size:14px;color:var(--muted);letter-spacing:.05em;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{position:absolute;left:0;top:0;width:100%;padding:20px;}
+    .card{border:none;padding:0;}
+  }
+  #printArea{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <!-- SCREEN 0: INTRO -->
+    <div class="screen active" data-screen="intro">
+      <div class="eyebrow">Евгения Вакорина · Ориентир в отношениях</div>
+      <h1 class="title">Какой мужчина тебе подходит для счастливого брака</h1>
+      <p class="lead">Иногда нас тянет не к тем мужчинам, которые подходят для спокойной совместной жизни, а к тем, рядом с которыми возникает знакомая сильная «химия». Этот тест поможет отделить яркое притяжение от реальной совместимости и собрать твой ориентир в отношениях.</p>
+      <p class="muted">Это не тест на совместимость с конкретным мужчиной и не попытка найти идеального партнёра. Результат покажет, какие качества, ценности и поступки особенно важны именно тебе.</p>
+      <p class="muted">7 минут, 5 коротких шагов.</p>
+      <div class="rule"></div>
+      <div class="row-actions">
+        <span class="step-note">Никто, кроме тебя, ответы не увидит</span>
+        <button class="btn" onclick="track('quiz_start');goTo('situation')">Начать →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN: SITUATION -->
+    <div class="screen" data-screen="situation">
+      <div class="progress-label">Шаг 1 из 5</div>
+      <div class="progress">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <h2 class="title" style="font-size:26px;">Какая у тебя сейчас ситуация</h2>
+      <p class="lead" style="font-size:18px;">Это поможет точнее сформулировать финальный вывод.</p>
+      <div class="tile-list" id="situationList"></div>
+      <div class="row-actions">
+        <button class="btn btn-ghost" onclick="goTo('intro')">← Назад</button>
+        <button class="btn" id="situationNext" disabled onclick="track('step_situation');goTo('s1')">Далее →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 1: STATES -->
+    <div class="screen" data-screen="s1">
+      <div class="progress-label">Шаг 2 из 5</div>
+      <div class="progress">
+        <div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <h2 class="title" style="font-size:26px;">Как ты хочешь чувствовать себя рядом с мужчиной</h2>
+      <p class="lead" style="font-size:18px;">Выбери ровно <b>3</b> состояния, без которых счастливого брака для тебя не будет.</p>
+      <div class="grid-3" id="statesGrid"></div>
+      <div class="row-actions">
+        <button class="btn btn-ghost" onclick="goTo('situation')">← Назад</button>
+        <span class="step-note" id="s1counter">выбрано 0 из 3</span>
+        <button class="btn" id="s1next" disabled onclick="track('step_states');goTo('s2')">Далее →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: VALUES -->
+    <div class="screen" data-screen="s2">
+      <div class="progress-label">Шаг 3 из 5</div>
+      <div class="progress">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <h2 class="title" style="font-size:26px;">На чём будет держаться брак</h2>
+      <p class="lead" style="font-size:18px;">Из списка ниже выбери <b>3</b> ценности, по которым тебе важно совпадать с мужчиной.</p>
+      <div class="value-list" id="valuesList"></div>
+      <div class="row-actions">
+        <button class="btn btn-ghost" onclick="goTo('s1')">← Назад</button>
+        <span class="step-note" id="s2counter">выбрано 0 из 3</span>
+        <button class="btn" id="s2next" disabled onclick="track('step_values');goTo('s3')">Далее →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: SLIDERS -->
+    <div class="screen" data-screen="s3">
+      <div class="progress-label">Шаг 4 из 5</div>
+      <div class="progress">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div>
+      </div>
+      <h2 class="title" style="font-size:26px;">Какой формат близости тебе подходит</h2>
+      <p class="lead" style="font-size:18px;">Подвинь каждый ползунок ближе к тому варианту, который откликается больше — среднее положение тоже считается ответом, если ты действительно посередине.</p>
+      <div id="slidersWrap"></div>
+      <p class="slider-hint" id="sliderGate">подвинь все 6 ползунков, чтобы продолжить</p>
+      <div class="row-actions">
+        <button class="btn btn-ghost" onclick="goTo('s2')">← Назад</button>
+        <span></span>
+        <button class="btn" id="s3next" disabled onclick="track('step_sliders');goTo('s4')">Далее →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: ATTRACTION CHECK -->
+    <div class="screen" data-screen="s4">
+      <div class="progress-label">Шаг 5 из 5</div>
+      <div class="progress">
+        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div>
+      </div>
+      <h2 class="title" style="font-size:26px;">Тебя тянет к нему — или он тебе подходит</h2>
+      <p class="lead" style="font-size:18px;">Отвечай про то, как обычно бывает на практике, а не про то, как «правильно».</p>
+      <div id="pairsWrap"></div>
+      <div class="row-actions">
+        <button class="btn btn-ghost" onclick="goTo('s3')">← Назад</button>
+        <span></span>
+        <button class="btn" id="s4next" disabled onclick="track('result_shown');showResult()">Собрать портрет →</button>
+      </div>
+    </div>
+
+    <!-- SCREEN RESULT -->
+    <div class="screen" data-screen="result">
+      <div class="eyebrow">Твой ориентир</div>
+      <div class="compass-wrap">
+        <div class="compass-labels" id="compassLabels">
+          <div class="lab n" id="labN">Опора</div>
+          <div class="lab e" id="labE">Тепло</div>
+          <div class="lab s" id="labS">Энергия</div>
+          <div class="lab w" id="labW">Свобода</div>
+        </div>
+        <svg width="260" height="260" viewBox="0 0 260 260" style="max-width:100%;">
+          <circle cx="130" cy="130" r="118" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <circle cx="130" cy="130" r="80" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <circle cx="130" cy="130" r="42" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <line x1="130" y1="12" x2="130" y2="248" stroke="var(--line)" stroke-width="1"/>
+          <line x1="12" y1="130" x2="248" y2="130" stroke="var(--line)" stroke-width="1"/>
+          <g id="needle" transform="rotate(0 130 130)">
+            <line x1="130" y1="130" x2="130" y2="28" stroke="var(--burgundy)" stroke-width="2.5"/>
+            <line x1="130" y1="130" x2="130" y2="200" stroke="var(--gold)" stroke-width="2"/>
+            <circle cx="130" cy="130" r="6" fill="var(--burgundy)"/>
+          </g>
+        </svg>
+        <div class="compass-note" id="compassNote"></div>
+      </div>
+
+      <div class="bars" id="barsWrap"></div>
+      <div class="rule"></div>
+
+      <h2 class="result-title" id="resultTitle"></h2>
+      <p class="result-lead" id="resultLead"></p>
+      <p id="resultDesc"></p>
+
+      <div class="orient-box">
+        <h3>Твой личный ориентир в отношениях</h3>
+        <div class="field">
+          <b>Рядом с мужчиной я хочу чувствовать себя</b>
+          <span id="orientStates"></span>
+        </div>
+        <div class="field">
+          <b>Мне принципиально совпадение в ценностях</b>
+          <span id="orientValues"></span>
+        </div>
+        <div class="field">
+          <b>Мои главные потребности в отношениях</b>
+          <span id="orientNeeds"></span>
+        </div>
+        <div class="field">
+          <b>Поступки, по которым я узнаю подходящего мужчину</b>
+          <ul class="list-clean" id="resultActions"></ul>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <b>Что я могу ошибочно принять за совместимость</b>
+          <span id="resultRisk"></span>
+        </div>
+      </div>
+
+      <div class="save-row">
+        <button class="btn btn-ghost btn-sm" onclick="savePdf()">Сохранить мой ориентир как PDF</button>
+      </div>
+
+      <div id="attractionBlock"></div>
+
+      <div class="practice-block">
+        <h3>Как использовать результат на практике</h3>
+        <p>После следующих трёх свиданий не спрашивай себя только «Понравилась ли я ему?». Ответь на пять вопросов:</p>
+        <ol>
+          <li>Было ли мне рядом с ним спокойно оставаться собой?</li>
+          <li>Было ли его отношение понятным или мне приходилось догадываться?</li>
+          <li>Совпадают ли его поступки со словами?</li>
+          <li>Уважает ли он мои границы, мнение и темп сближения?</li>
+          <li>Мне действительно интересен этот мужчина или меня затягивает неопределённость?</li>
+        </ol>
+        <p class="key-q">И ещё один главный вопрос: если убрать страх остаться одной и желание понравиться, выбрала бы я этого мужчину ещё раз?</p>
+      </div>
+
+      <div class="dating-block">
+        <h3>Что спросить на первых свиданиях</h3>
+        <div class="sub">Вопросы под твой ориентир — не для допроса, а для наблюдения за ответами.</div>
+        <div id="datingWrap"></div>
+      </div>
+
+      <div class="quote">«Я выбираю не мужчину, рядом с которым сильнее всего тревожусь и надеюсь. Я выбираю мужчину, с которым могу любить, оставаться собой и вместе строить реальную жизнь.»</div>
+
+      <div class="cta-box">
+        <h3>Ты увидела, какой мужчина тебе подходит. Но это ещё не объясняет, почему тебя может тянуть к другим</h3>
+        <p>Можно осознанно хотеть надёжного, эмоционально доступного и взрослого партнёра — и снова выбирать мужчину, рядом с которым приходится ждать, доказывать, спасать или надеяться, что он изменится. Потому что сознательные требования к партнёру и привычный сценарий притяжения — не одно и то же.</p>
+        <p class="situ-line" id="situLine"></p>
+        <p style="font-weight:600;margin-bottom:6px;">Мини-разбор по натальной карте «Что мешает тебе выйти замуж»</p>
+        <p>На разборе посмотрим:</p>
+        <ul class="list-clean">
+          <li>какой сценарий отношений ты можешь повторять</li>
+          <li>к каким мужчинам тебя особенно тянет и почему</li>
+          <li>какие страхи или внутренние противоречия мешают строить близость</li>
+          <li>какого партнёра ты ищешь сознательно, а какого выбираешь автоматически</li>
+          <li>что важно изменить в своём выборе и поведении</li>
+          <li>на какие качества мужчины тебе действительно стоит опираться</li>
+        </ul>
+        <p>Ты получишь голосовой разбор на 15–30 минут и мини-PDF с основными выводами.</p>
+        <div class="cta-price">Стоимость — 1 888 ₽</div>
+        <div class="cta-btn-row">
+          <a class="btn cta-main-btn" id="tgBtn" href="#" target="_blank" rel="noopener" onclick="onCtaClick()">Получить разбор в Telegram</a>
+          <a class="btn cta-main-btn" id="vkLink" href="#" target="_blank" rel="noopener" onclick="onCtaClick()">Получить разбор ВКонтакте</a>
+        </div>
+        <div class="cta-note">Напиши слово «ЗАМУЖ» и пришли результат калькулятора — оно уже скопировано в буфер обмена. Для разбора понадобятся дата, точное время и место рождения.</div>
+      </div>
+
+      <button class="restart" onclick="restart()">Пройти ещё раз</button>
+    </div>
+
+    <div class="footer-name">ЕВГЕНИЯ ВАКОРИНА · АСТРОЛОГ И ТАРОЛОГ</div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+/* ====== CONFIG — подставь свои данные перед публикацией ====== */
+const TELEGRAM_USERNAME = "jain1109"; // без @
+const VK_MESSAGE_URL = "https://vk.ru/im?sel=-224753072";
+const PREFILL_WORD = "ЗАМУЖ";
+const YM_COUNTER_ID = null; // впиши id счётчика Яндекс.Метрики, если он есть на странице
+
+function track(name){
+  try{ if(YM_COUNTER_ID && window.ym) ym(YM_COUNTER_ID,'reachGoal',name); }catch(e){}
+  try{ if(window.gtag) gtag('event', name); }catch(e){}
+}
+
+/* ====== DATA ====== */
+// A = Опора (надёжность и ответственность)
+// B = Тепло (эмоциональная близость)
+// C = Свобода (уважение и равноправие)
+// D = Энергия (развитие и живой интерес)
+
+const NEED_DEF = {
+  A:"надёжность и ответственность",
+  B:"эмоциональная близость",
+  C:"уважение и равноправие",
+  D:"развитие и живой интерес"
+};
+
+const STATES = [
+  {t:"спокойной", g:"A"}, {t:"защищённой", g:"A"}, {t:"уверенной", g:"A"}, {t:"расслабленной", g:"A"},
+  {t:"любимой", g:"B"}, {t:"желанной", g:"B"}, {t:"услышанной", g:"B"}, {t:"нежной", g:"B"},
+  {t:"свободной", g:"C"}, {t:"уважаемой", g:"C"}, {t:"равной", g:"C"}, {t:"принятой", g:"C"},
+  {t:"живой", g:"D"}, {t:"вдохновлённой", g:"D"}, {t:"интересной", g:"D"}
+];
+
+const VALUES = [
+  {t:"Верность и договорённости", g:"A"},
+  {t:"Финансовая ответственность", g:"A"},
+  {t:"Дом и устойчивость", g:"A"},
+  {t:"Эмоциональная близость", g:"B"},
+  {t:"Семья и дети", g:"B"},
+  {t:"Здоровье и забота о себе", g:"B"},
+  {t:"Свобода и личное пространство", g:"C"},
+  {t:"Уважение и равноправие", g:"C"},
+  {t:"Развитие", g:"D"},
+  {t:"Яркость и впечатления", g:"D"}
+];
+
+// каждая уникальная пара потребностей встречается ровно один раз —
+// A,B,C,D участвуют в подсчёте поровну (по 3 ползунка на каждую)
+const SLIDERS = [
+  {left:"Заботу проще показать делом, чем словами", lg:"A", right:"Мне важно слышать о чувствах вслух", rg:"B"},
+  {left:"Общий чёткий уклад в быту и деньгах", lg:"A", right:"Каждый сам распоряжается своим временем и кругом", rg:"C"},
+  {left:"Стабильный, предсказуемый ритм жизни", lg:"A", right:"Готовность резко менять планы ради нового", rg:"D"},
+  {left:"Много времени вместе, общий круг и увлечения", lg:"B", right:"Много личного пространства, у каждого своя жизнь", rg:"C"},
+  {left:"Спокойная, ровная близость день за днём", lg:"B", right:"Яркие впечатления и новые эмоции чаще, чем стабильность", rg:"D"},
+  {left:"Каждый развивается в своём темпе, без сравнений", lg:"C", right:"Растём и меняемся вместе, подталкивая друг друга", rg:"D"}
+];
+
+const PAIRS = [
+  {q:"В начале отношений мне интереснее, когда мужчина:", opts:[
+    {t:"проявляется ярко, но непредсказуемо", anx:true},
+    {t:"проявляется постепенно, но последовательно", anx:false}
+  ]},
+  {q:"Если мужчина пишет регулярно и открыто показывает интерес:", opts:[
+    {t:"мне становится спокойнее и интерес сохраняется", anx:false},
+    {t:"через некоторое время мне начинает не хватать напряжения и загадки", anx:true}
+  ]},
+  {q:"Сильнее всего меня затягивают отношения, в которых:", opts:[
+    {t:"я не до конца понимаю, что мужчина ко мне чувствует", anx:true},
+    {t:"отношение мужчины понятно, но близость развивается постепенно", anx:false}
+  ]},
+  {q:"Если мужчина эмоционально доступен:", opts:[
+    {t:"мне легче открываться в ответ", anx:false},
+    {t:"я могу начать сомневаться, есть ли между нами настоящая химия", anx:true}
+  ]},
+  {q:"После свидания я чаще думаю:", opts:[
+    {t:"понравилась ли я ему и когда он напишет", anx:true},
+    {t:"понравился ли он мне и подходит ли мне его поведение", anx:false}
+  ]}
+];
+
+const SITUATIONS = [
+  {t:"Я свободна и хочу серьёзных отношений", line:"Ты свободна — а значит, есть шанс с самого начала выбирать по своему ориентиру, а не по инерции."},
+  {t:"Знакомлюсь, но отношения не складываются", line:"Знакомства не складываются не потому что мужчин мало — часто дело в сценарии выбора, который повторяется незаметно для тебя самой."},
+  {t:"Нахожусь в неопределённых отношениях", line:"Неопределённость может тянуться годами именно потому, что реальный сценарий отношений остаётся неосознанным."},
+  {t:"Есть партнёр, но я сомневаюсь в будущем", line:"Сомнения в будущем с партнёром — сигнал разобраться, что в отношениях действительно про тебя, а что про привычный страх."},
+  {t:"Восстанавливаюсь после расставания", line:"После расставания легко снова выбрать по старому сценарию, даже точно зная, каким должен быть подходящий мужчина."}
+];
+
+const PORTRAITS = {
+  A:{
+    name:"Опора",
+    title:"Тебе подходит мужчина-опора",
+    lead:"Тебе важнее не свечи и вечные комплименты, а ощущение, что земля под ногами не шатается.",
+    desc:"Ты не про «лишь бы не одной». Ты про то, чтобы на человека можно было опереться в деньгах, в быте, в решениях — и не тащить всё в одиночку. Тебе нужен не идеальный, а надёжный: тот, кто держит слово чаще, чем нарушает.",
+    actions:[
+      "Выполняет обещанное, а не «как получится»",
+      "Обсуждает бюджет и крупные траты вместе, а не ставит перед фактом",
+      "Не пропадает, когда тяжело — наоборот, включается",
+      "Говорит прямо про деньги, долги и планы, а не увиливает"
+    ],
+    risk:"Стабильность легко перепутать со скукой. Опора не означает, что тебе не о чем с ним поговорить.",
+    dating:[
+      "Как ты обычно принимаешь крупные финансовые решения?",
+      "Что для тебя означает ответственность в отношениях?",
+      "Как ты ведёшь себя, когда близкому человеку трудно?"
+    ]
+  },
+  B:{
+    name:"Тепло",
+    title:"Тебе подходит мужчина, который умеет быть рядом",
+    lead:"Тебе важнее не статус отношений, а то, что тебя слышат, когда паршиво.",
+    desc:"Тебе нужна не бесконечная романтика, а контакт: чтобы не приходилось объяснять очевидное и оправдываться за свои чувства. Близость для тебя — это когда тебя не разбирают на «слишком остро реагируешь», а спрашивают, что случилось, и правда ждут ответ.",
+    actions:[
+      "Спрашивает, что случилось, и правда слушает ответ",
+      "Не обесценивает твои переживания фразой «ты слишком остро реагируешь»",
+      "Показывает чувства не только словами, но и поступками",
+      "Не уходит от разговора, если тема неудобная"
+    ],
+    risk:"Тепло легко перепутать с тревожной слитостью. Если без него ты вообще не функционируешь — это не близость, а зависимость.",
+    dating:[
+      "Как ты обычно решаешь конфликты?",
+      "Как ты показываешь заботу и любовь?",
+      "Что ты делаешь, когда партнёр расстроен?"
+    ]
+  },
+  C:{
+    name:"Свобода",
+    title:"Тебе подходит партнёр, а не надзиратель",
+    lead:"Тебе важнее не «сколько раз в день он пишет», а то, что тебя не пытаются переделать.",
+    desc:"Тебе не нужен человек, который дышит в затылок. Тебе нужен тот, кто уважает твоё «нет» с первого раза и не путает любовь с контролем. Равенство для тебя не абстракция: у тебя есть право на свою жизнь, и оно не обсуждается.",
+    actions:[
+      "Уважает твоё «нет» с первого раза, а не с третьего скандала",
+      "Не контролирует телефон, друзей, одежду, передвижения",
+      "Признаёт за тобой право на свою жизнь, работу, интересы",
+      "Спорит по существу, а не давит и не обижается неделями"
+    ],
+    risk:"Свободу легко перепутать с недоступностью. Если ты постоянно кому-то что-то доказываешь — это не уважение, а дистанция, которую тебе продали как независимость.",
+    dating:[
+      "Сколько личного пространства тебе нужно в отношениях?",
+      "Что для тебя является ревностью, а что — контролем?",
+      "Как, по-твоему, должны приниматься общие решения?"
+    ]
+  },
+  D:{
+    name:"Энергия",
+    title:"Тебе подходит мужчина, с которым не скучно",
+    lead:"Тебе важнее не расписание на месяц вперёд, а то, что рядом с ним хочется жить, а не выживать.",
+    desc:"Тебе нужен не тот, кто «всегда так делал», а тот, кто готов пробовать новое вместе с тобой. Рост и живой интерес для тебя не роскошь, а условие: если рядом с мужчиной ты перестаёшь развиваться, это не стабильность, а застой с его именем.",
+    actions:[
+      "Готов пробовать новое, а не держится за «мы всегда так делали»",
+      "Поддерживает твои цели, а не тормозит из зависти",
+      "Умеет удивлять, а не только обещать",
+      "Растёт сам и не злится, когда растёшь ты"
+    ],
+    risk:"Яркость легко перепутать с нестабильностью. Если рядом с ним весело, но совершенно непонятно, на что рассчитывать завтра, — это не искры, а неопределённость.",
+    dating:[
+      "Что тебе сейчас интересно развивать в своей жизни?",
+      "Как ты относишься к переменам и новым впечатлениям?",
+      "Как реагируешь, когда партнёр растёт быстрее или меняет направление?"
+    ]
+  }
+};
+
+const GROUPS = ['A','B','C','D'];
+function countGroup(arr,g){ return arr.filter(x=>x.g===g).length; }
+const MAX_STATES={}, MAX_VALUES={}, MAX_SLIDERS={};
+GROUPS.forEach(g=>{
+  MAX_STATES[g] = 2*Math.min(3, countGroup(STATES,g));
+  MAX_VALUES[g] = 2*Math.min(3, countGroup(VALUES,g));
+  MAX_SLIDERS[g] = 2*SLIDERS.filter(s=>s.lg===g||s.rg===g).length;
+});
+
+/* ====== STATE ====== */
+let selStates = [];
+let selValues = [];
+let sliderVals = [3,3,3,3,3,3];
+let sliderTouched = [false,false,false,false,false,false];
+let pairChoices = [null,null,null,null,null];
+let situationIndex = null;
+
+/* ====== BUILD: SITUATION ====== */
+const situationList = document.getElementById('situationList');
+SITUATIONS.forEach((s,i)=>{
+  const el = document.createElement('div');
+  el.className='tile';
+  el.innerHTML = `<span class="mark">✓</span><span>${s.t}</span>`;
+  el.onclick = ()=>{
+    situationIndex = i;
+    situationList.querySelectorAll('.tile').forEach(t=>t.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('situationNext').disabled = false;
+  };
+  situationList.appendChild(el);
+});
+
+/* ====== BUILD: STATES ====== */
+const statesGrid = document.getElementById('statesGrid');
+STATES.forEach((s,i)=>{
+  const el = document.createElement('div');
+  el.className = 'chip';
+  el.textContent = s.t;
+  el.onclick = ()=>toggleState(i, el);
+  statesGrid.appendChild(el);
+});
+function toggleState(i, el){
+  const idx = selStates.indexOf(i);
+  if(idx>-1){ selStates.splice(idx,1); el.classList.remove('selected'); }
+  else{
+    if(selStates.length>=3) return;
+    selStates.push(i); el.classList.add('selected');
+  }
+  document.getElementById('s1counter').textContent = `выбрано ${selStates.length} из 3`;
+  document.getElementById('s1next').disabled = selStates.length!==3;
+  const chips = statesGrid.querySelectorAll('.chip');
+  chips.forEach((c,ci)=>{
+    if(selStates.length>=3 && selStates.indexOf(ci)===-1) c.classList.add('locked');
+    else c.classList.remove('locked');
+  });
+}
+
+/* ====== BUILD: VALUES ====== */
+const valuesList = document.getElementById('valuesList');
+VALUES.forEach((v,i)=>{
+  const row = document.createElement('div');
+  row.className='value-row';
+  row.innerHTML = `<span class="mark">✓</span><span>${v.t}</span>`;
+  row.onclick = ()=>toggleValue(i,row);
+  valuesList.appendChild(row);
+});
+function toggleValue(i,row){
+  const idx = selValues.indexOf(i);
+  if(idx>-1){ selValues.splice(idx,1); row.classList.remove('selected'); }
+  else{
+    if(selValues.length>=3) return;
+    selValues.push(i); row.classList.add('selected');
+  }
+  document.getElementById('s2counter').textContent = `выбрано ${selValues.length} из 3`;
+  document.getElementById('s2next').disabled = selValues.length!==3;
+  const rows = valuesList.querySelectorAll('.value-row');
+  rows.forEach((r,ri)=>{
+    if(selValues.length>=3 && selValues.indexOf(ri)===-1) r.style.opacity='.4';
+    else r.style.opacity='1';
+  });
+}
+
+/* ====== BUILD: SLIDERS ====== */
+const slidersWrap = document.getElementById('slidersWrap');
+SLIDERS.forEach((s,i)=>{
+  const block = document.createElement('div');
+  block.className='slider-block';
+  block.innerHTML = `
+    <div class="slider-labels"><span>${s.left}</span><span>${s.right}</span></div>
+    <input type="range" min="1" max="5" step="1" value="3" data-i="${i}">
+  `;
+  slidersWrap.appendChild(block);
+});
+slidersWrap.addEventListener('input', (e)=>{
+  if(e.target.tagName==='INPUT'){
+    const i = +e.target.dataset.i;
+    sliderVals[i] = +e.target.value;
+    if(!sliderTouched[i]){
+      sliderTouched[i] = true;
+      e.target.classList.add('touched');
+    }
+    checkSlidersGate();
+  }
+});
+function checkSlidersGate(){
+  const allTouched = sliderTouched.every(Boolean);
+  document.getElementById('s3next').disabled = !allTouched;
+  const gate = document.getElementById('sliderGate');
+  if(allTouched){
+    gate.textContent = 'готово';
+    gate.classList.add('ok');
+  } else {
+    gate.textContent = `подвинь ещё ${sliderTouched.filter(t=>!t).length} ползунк${sliderTouched.filter(t=>!t).length===1?'а':'ов'}`;
+    gate.classList.remove('ok');
+  }
+}
+
+/* ====== BUILD: ATTRACTION PAIRS ====== */
+const pairsWrap = document.getElementById('pairsWrap');
+PAIRS.forEach((p,i)=>{
+  const block = document.createElement('div');
+  block.className='pair';
+  const optsHtml = p.opts.map((o,oi)=>`<div class="pair-opt" data-i="${i}" data-oi="${oi}">${o.t}</div>`).join('');
+  block.innerHTML = `<div class="pair-q">${p.q}</div>${optsHtml}`;
+  pairsWrap.appendChild(block);
+});
+pairsWrap.addEventListener('click', (e)=>{
+  const opt = e.target.closest('.pair-opt');
+  if(!opt) return;
+  const i = +opt.dataset.i, oi = +opt.dataset.oi;
+  pairChoices[i] = oi;
+  const block = opt.parentElement;
+  block.querySelectorAll('.pair-opt').forEach(o=>o.classList.remove('selected'));
+  opt.classList.add('selected');
+  document.getElementById('s4next').disabled = pairChoices.includes(null);
+});
+
+/* ====== NAVIGATION ====== */
+function goTo(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`[data-screen="${name}"]`).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ====== SCORING + RESULT ====== */
+function showResult(){
+  const raw = {A:0,B:0,C:0,D:0};
+
+  selStates.forEach(i=>{ raw[STATES[i].g]+=2; });
+  selValues.forEach(i=>{ raw[VALUES[i].g]+=2; });
+  SLIDERS.forEach((s,i)=>{
+    const v = sliderVals[i];
+    raw[s.lg] += 2*(5-v)/4;
+    raw[s.rg] += 2*(v-1)/4;
+  });
+
+  const percent = {};
+  GROUPS.forEach(g=>{
+    const max = MAX_STATES[g]+MAX_VALUES[g]+MAX_SLIDERS[g];
+    percent[g] = max>0 ? Math.round(Math.min(100, (raw[g]/max)*100)) : 0;
+  });
+
+  const anxiousCount = pairChoices.reduce((acc,oi,i)=> acc + (PAIRS[i].opts[oi].anx ? 1:0), 0);
+
+  // needle vector from percentages, angles clockwise from up: A=0, B=90, D=180, C=270
+  const angleMap = {A:0,B:90,D:180,C:270};
+  let sumSin=0,sumCos=0,totalPct=0;
+  GROUPS.forEach(g=>{
+    const rad = angleMap[g]*Math.PI/180;
+    sumSin += percent[g]*Math.sin(rad);
+    sumCos += percent[g]*Math.cos(rad);
+    totalPct += percent[g];
+  });
+  const magnitude = Math.sqrt(sumSin*sumSin+sumCos*sumCos);
+  const normMag = totalPct>0 ? magnitude/totalPct : 0;
+  const needleEl = document.getElementById('needle');
+  const compassNote = document.getElementById('compassNote');
+  const BALANCE_THRESHOLD = 0.12;
+  if(normMag < BALANCE_THRESHOLD){
+    needleEl.setAttribute('transform', `rotate(0 130 130)`);
+    needleEl.style.opacity = '0.25';
+    compassNote.textContent = 'Ровный баланс — ни одна потребность не перевешивает явно';
+  } else {
+    let needleDeg = Math.atan2(sumSin,sumCos)*180/Math.PI;
+    if(needleDeg<0) needleDeg+=360;
+    needleEl.setAttribute('transform', `rotate(${needleDeg.toFixed(1)} 130 130)`);
+    needleEl.style.opacity = '1';
+    compassNote.textContent = '';
+  }
+
+  // ranking
+  const order = ['A','B','C','D'];
+  const sorted = order.slice().sort((x,y)=>percent[y]-percent[x]);
+  const top1 = sorted[0], top2 = sorted[1];
+  const isCombo = (percent[top1]-percent[top2]) < 15;
+
+  // bars
+  const barsWrap = document.getElementById('barsWrap');
+  barsWrap.innerHTML = '';
+  order.forEach(k=>{
+    const isWin = k===top1 || (isCombo && k===top2);
+    const row = document.createElement('div');
+    row.className = 'bar-row' + (isWin && normMag>=BALANCE_THRESHOLD ? ' win' : (isWin && isCombo ? ' win' : ''));
+    row.innerHTML = `
+      <div class="bar-name">${PORTRAITS[k].name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(percent[k],3)}%"></div></div>
+      <div class="bar-pct">${percent[k]}%</div>
+    `;
+    barsWrap.appendChild(row);
+  });
+
+  ['labN','labE','labS','labW'].forEach(id=>document.getElementById(id).classList.remove('win'));
+  if(normMag >= BALANCE_THRESHOLD){
+    const labByGroup = {A:'labN', B:'labE', D:'labS', C:'labW'};
+    document.getElementById(labByGroup[top1]).classList.add('win');
+    if(isCombo) document.getElementById(labByGroup[top2]).classList.add('win');
+  }
+
+  const topKeys = isCombo ? [top1, top2] : [top1];
+  const p1 = PORTRAITS[top1];
+
+  if(isCombo){
+    const p2 = PORTRAITS[top2];
+    document.getElementById('resultTitle').textContent = `Твой ориентир — «${p1.name}» и «${p2.name}»`;
+    document.getElementById('resultLead').textContent = `${p1.lead} А ещё: ${p2.lead.charAt(0).toLowerCase()+p2.lead.slice(1)}`;
+    document.getElementById('resultDesc').textContent = `${p1.desc} ${p2.desc}`;
+    document.getElementById('resultActions').innerHTML = [...p1.actions.slice(0,2), ...p2.actions.slice(0,2)].map(a=>`<li>${a}</li>`).join('');
+    document.getElementById('resultRisk').textContent = `${p1.risk} ${p2.risk}`;
+    document.getElementById('orientNeeds').textContent = `${p1.name} (${NEED_DEF[top1]}) и ${p2.name} (${NEED_DEF[top2]})`;
+  } else {
+    document.getElementById('resultTitle').textContent = p1.title;
+    document.getElementById('resultLead').textContent = p1.lead;
+    document.getElementById('resultDesc').textContent = p1.desc;
+    document.getElementById('resultActions').innerHTML = p1.actions.map(a=>`<li>${a}</li>`).join('');
+    document.getElementById('resultRisk').textContent = p1.risk;
+    document.getElementById('orientNeeds').textContent = `${p1.name} (${NEED_DEF[top1]})`;
+  }
+
+  document.getElementById('orientStates').textContent = selStates.map(i=>STATES[i].t).join(', ');
+  document.getElementById('orientValues').textContent = selValues.map(i=>VALUES[i].t).join(', ');
+
+  const datingWrap = document.getElementById('datingWrap');
+  datingWrap.innerHTML = topKeys.map(k=>`
+    <div class="dating-group">
+      <div class="g-name">${PORTRAITS[k].name}</div>
+      <ul class="list-clean">${PORTRAITS[k].dating.map(q=>`<li>${q}</li>`).join('')}</ul>
+    </div>
+  `).join('');
+
+  const attractionBlock = document.getElementById('attractionBlock');
+  if(anxiousCount>=3){
+    attractionBlock.innerHTML = `
+      <div class="callout warn">
+        <b>Одна важная штука.</b>
+        Ты только что описала мужчину, с которым тебе будет спокойно. Но в последнем блоке ты чаще узнавала себя в тревожных вариантах. Это не значит, что с тобой что-то не так — это значит, что есть сценарий, который выбирает знакомое напряжение вместо непривычного спокойствия. Портрет у тебя есть. Вопрос — почему на практике ты обычно выбираешь не по нему.
+      </div>`;
+  } else {
+    attractionBlock.innerHTML = '';
+  }
+
+  const situ = situationIndex!==null ? SITUATIONS[situationIndex].line : '';
+  document.getElementById('situLine').textContent = situ;
+
+  document.getElementById('tgBtn').href = `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(PREFILL_WORD)}`;
+  document.getElementById('vkLink').href = VK_MESSAGE_URL;
+
+  buildPrintArea(topKeys, isCombo);
+
+  goTo('result');
+}
+
+function onCtaClick(){
+  track('cta_click');
+  try{ navigator.clipboard.writeText(PREFILL_WORD); }catch(e){}
+}
+
+function buildPrintArea(topKeys, isCombo){
+  const needsText = document.getElementById('orientNeeds').textContent;
+  const statesText = document.getElementById('orientStates').textContent;
+  const valuesText = document.getElementById('orientValues').textContent;
+  const actionsHtml = document.getElementById('resultActions').innerHTML;
+  const riskText = document.getElementById('resultRisk').textContent;
+  document.getElementById('printArea').innerHTML = `
+    <div style="font-family:'Playfair Display',serif;color:#4A1526;font-size:22px;margin-bottom:4px;">Евгения Вакорина · Ориентир в отношениях</div>
+    <div style="font-family:'Playfair Display',serif;font-size:28px;color:#2A211C;margin-bottom:18px;">Твой личный ориентир в отношениях</div>
+    <p><b>Рядом с мужчиной я хочу чувствовать себя:</b> ${statesText}</p>
+    <p><b>Мне принципиально совпадение в ценностях:</b> ${valuesText}</p>
+    <p><b>Мои главные потребности в отношениях:</b> ${needsText}</p>
+    <p><b>Поступки, по которым я узнаю подходящего мужчину:</b></p>
+    <ul>${actionsHtml}</ul>
+    <p><b>Что я могу ошибочно принять за совместимость:</b> ${riskText}</p>
+  `;
+}
+
+function savePdf(){
+  track('pdf_save_click');
+  document.body.classList.add('printing');
+  window.print();
+}
+window.addEventListener('afterprint', ()=>{ document.body.classList.remove('printing'); });
+
+function restart(){
+  selStates = []; selValues = []; sliderVals=[3,3,3,3,3,3]; sliderTouched=[false,false,false,false,false,false];
+  pairChoices=[null,null,null,null,null]; situationIndex=null;
+  document.querySelectorAll('.chip').forEach(c=>{c.classList.remove('selected','locked');});
+  document.querySelectorAll('.value-row').forEach(r=>{r.classList.remove('selected'); r.style.opacity='1';});
+  document.querySelectorAll('#situationList .tile').forEach(t=>t.classList.remove('selected'));
+  document.querySelectorAll('input[type=range]').forEach(s=>{s.value=3; s.classList.remove('touched');});
+  document.querySelectorAll('.pair-opt').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('s1counter').textContent = 'выбрано 0 из 3';
+  document.getElementById('s2counter').textContent = 'выбрано 0 из 3';
+  document.getElementById('s1next').disabled = true;
+  document.getElementById('s2next').disabled = true;
+  document.getElementById('s3next').disabled = true;
+  document.getElementById('s4next').disabled = true;
+  document.getElementById('situationNext').disabled = true;
+  checkSlidersGate();
+  goTo('intro');
+}
+</script>
+</body>
+</html>
